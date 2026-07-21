@@ -1,2 +1,5 @@
 # keylog
-a simple keylogger implementation in C#
+a simple windows based keylogger implementation in C#
+
+## to build
+dotnet build
