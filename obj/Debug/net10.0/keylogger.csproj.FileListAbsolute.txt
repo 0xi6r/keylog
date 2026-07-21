@@ -1,0 +1,4 @@
+C:\Users\sysadm\ps\work\red-team\poc\poc\ccc\keylogger\obj\Debug\net10.0\keylogger.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\sysadm\ps\work\red-team\poc\poc\ccc\keylogger\obj\Debug\net10.0\keylogger.AssemblyInfoInputs.cache
+C:\Users\sysadm\ps\work\red-team\poc\poc\ccc\keylogger\obj\Debug\net10.0\keylogger.AssemblyInfo.cs
+C:\Users\sysadm\ps\work\red-team\poc\poc\ccc\keylogger\obj\Debug\net10.0\keylogger.csproj.CoreCompileInputs.cache
