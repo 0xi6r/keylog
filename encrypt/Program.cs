@@ -63,8 +63,6 @@ namespace CredentialGenerator
 
         private static string GetPassphrase()
 		{
-		    // Hardcoded — same on all machines.
-		    // Change this to something unique for your campaign.
 		    return "My$ecure!Campaign2024#Key";
 		}
     }
